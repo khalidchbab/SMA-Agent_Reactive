@@ -9,15 +9,17 @@ def get_remove(l):
 
 class Bloc:
 
-    def __init__(self, pos_ini, pos_fin):
+    def __init__(self, pos_ini, pos_fin,name):
         self.pos_ini = pos_ini
         self.pos_final = pos_fin
         self.pos_act = pos_ini
         self.satisfaction = True if self.pos_ini == self.pos_final else False
         self.blocT = None
         self.blocD = None
+        self.name = name
         
-        
+    def __str__(self):
+     return self.name
 
     def perception(self,env):
         infos = env.get_infos(self)
@@ -45,7 +47,8 @@ class Environment:
         self.conf_fin = [i for i in range(n)]
         
         for i in range(n):
-            self.blocs.append(Bloc(get_remove(self.conf_int),get_remove(self.conf_fin)))
+            self.blocs.append(Bloc(get_remove(self.conf_int),get_remove(self.conf_fin),"B"+str(i)))
+        self.blocs.sort(key=lambda x: x.pos_ini)
         self.signals = []
         self.emplacements = [self.blocs,[],[]]
 
@@ -68,17 +71,17 @@ class Environment:
             return (None,None)
         elif pos == 0 and len(self.emplacements[emp])>1:
             return (None,self.emplacements[emp][pos+1])
-        elif pos == len(self.emplacements[emp]):
+        elif pos == len(self.emplacements[emp])-1:
             return (self.emplacements[emp][pos-1],None)
         
-        return (self.emplacements[emp][pos],self.emplacements[emp][pos])
+        return (self.emplacements[emp][pos-1],self.emplacements[emp][pos+1])
             
 
 
 def main():
     env = Environment(4)
     for b in env.blocs:
-        print("Im : ", b ,env.get_infos(b)," b ", b.pos_final, " and ",b.pos_ini)
+        print("Im : ", b ,env.get_infos(b)," pos_final ", b.pos_final, " and pos_ini",b.pos_ini)
 
 if __name__ == "__main__":
     main()
